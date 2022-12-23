@@ -139,7 +139,7 @@ window.onload = () => {
     })
   } else {
     let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
-    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
+    <img src="./assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
     document.querySelector(".cartPage__body").style.display = "none";
     document.querySelector(".cartPage__footer").style.display = "none";
     document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);
