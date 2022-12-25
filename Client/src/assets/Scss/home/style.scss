@@ -11,10 +11,14 @@
   --transition: all 0.3s linear;
 }
 
-@import "../home/_mixin.scss";
+@import "./_mixin.scss";
 @import "../home/base/variable";
-@import "../home/sweetAlert";
-@import "../home/loader";
+@import "./sweetAlert";
+@import "./loader";
+@import "./scroll";
+@import "./notification";
+@import "./darkmode";
+@import "./viewProduct";
 
 body::-webkit-scrollbar {
   width: 10px;
@@ -48,7 +52,7 @@ a:hover {
     0.5rem,
     1.8rem,
     400,
-    var(--light__color),
+    #fff,
     var(--transition),
     transparent,
     var(--five__color),
@@ -179,7 +183,7 @@ a:hover {
       /* margin-left: 5px; */
       border-radius: 0 10px 10px 0;
       border: none;
-      color: var(--light__color);
+      color: #fff;
       background: var(--background);
     }
   }
@@ -194,18 +198,18 @@ a:hover {
   background-position: center;
   background-size: cover;
 
-  &::before {
-    content: " ";
-    position: absolute;
-    background-image: url(../../images/background.png);
-    width: 100%;
-    height: 105%;
-    /* background-size: 94%; */
-    left: 25%;
-    background-repeat: no-repeat;
-    top: -5%;
-    z-index: -1;
-  }
+  // &::before {
+  //   content: " ";
+  //   position: absolute;
+  //   background-image: url(../../images/background.png);
+  //   width: 100%;
+  //   height: 105%;
+  //   /* background-size: 94%; */
+  //   left: 25%;
+  //   background-repeat: no-repeat;
+  //   top: -5%;
+  //   z-index: -1;
+  // }
 
   .container {
     display: flex;
@@ -362,6 +366,7 @@ a:hover {
     }
 
     &-body {
+      background: #fff;
       padding: 2rem;
       .text-group{
         display: flex;
@@ -388,7 +393,7 @@ text-overflow: ellipsis;
 
   &__item {
     @include flexbox(flex-start, flex-start, column);
-
+    color: #fff;
     ul {
       margin-top: 2rem;
       li {
@@ -404,7 +409,7 @@ text-overflow: ellipsis;
           text-align: center;
           line-height: 4rem;
           font-size: 1.8rem;
-          color: var(--light__color);
+          color: #fff;
         }
 
         span {
@@ -418,6 +423,7 @@ text-overflow: ellipsis;
       padding-bottom: 1rem;
       font-size: 2.4rem;
       position: relative;
+      color: #fff;
       &::before,
       &::after {
         content: "";
@@ -571,7 +577,7 @@ text-overflow: ellipsis;
     border-radius: 50%;
     text-align: center;
     line-height: 3rem;
-    color: var(--primary__color);
+    color: #000;
   }
   .btn{
     padding: 1rem;

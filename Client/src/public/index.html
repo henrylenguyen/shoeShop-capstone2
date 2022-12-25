@@ -20,18 +20,19 @@
 
     <link href="../assets/styles/magnify.css" rel="stylesheet">
      <!-- STYLE CSS -->
-    <link href="./assets/styles/style.css" rel="stylesheet">
-    <link href="./assets/styles/home/style.css" rel="stylesheet">
+    <link href="../assets/styles/style.css" rel="stylesheet">
+    <link href="../assets/styles/home/style.css" rel="stylesheet">
 </head>
 <body>
+  <div class="theme"><i class="fas fa-sun theme-icon"></i></div>
   <header class="header">
     <div class="navbar">
       <div class="container">
         <div class="navbar__left">
           <button class="d-none">
-            <img src="./assets/images/toggleMenu.png" alt="toggleMenu">
+            <img src="../assets/images/toggleMenu.png" alt="toggleMenu">
           </button>
-          <img src="./assets/icons/icon1.png" alt="icon">
+          <img src="../assets/icons/icon1.png" alt="icon">
         </div>
         <nav>
           <ul class="navbar__list">
@@ -39,19 +40,19 @@
               <a class="navbar__link active" href="./index.html">HOME</a>
             </li>
             <li class="navbar__item">
-              <a class="navbar__link" href="./pages/men.html">MEN</a>
+              <a class="navbar__link" href="../pages/men.html">MEN</a>
             </li>
             <li class="navbar__item">
-              <a class="navbar__link" href="./pages/woment.html">WOMEN</a>
+              <a class="navbar__link" href="../pages/woment.html">WOMEN</a>
             </li>
             <li class="navbar__item">
-              <a class="navbar__link" href="./pages/kid.html">KIDS</a>
+              <a class="navbar__link" href="../pages/kid.html">KIDS</a>
             </li>
           </ul>
         </nav>
         <div class="navbar__right">
           <div class="cart">
-            <img src="./assets/icons/bag.png" alt="bag">
+            <img src="../assets/icons/bag.png" alt="bag">
             <span class="quantityOfProducts"></span>
           </div>
         </div>
@@ -83,13 +84,13 @@
           </ul>
         </nav>
             <div class="carousel__text">
-              <img src="./assets/images/Nike_Logo.png" alt="Nike_Logo">
+              <img src="../assets/images/Nike_Logo.png" alt="Nike_Logo">
               <h1><span>Boring</span><br>shoes?</h1>
               <h3>Let Us HELP you fix it..</h3>
               <button class="btn_primary">Explore our store</button>
             </div>
             <div class="carousel__image">
-                  <img src="./assets/images/shoe1.png" alt="shoe1">
+                  <img src="../assets/images/shoe1.png" alt="shoe1">
               <div class="carousel__price">
                 <i class="fa-solid fa-angle-left"></i>
                 <div class="carousel__price--addCart">
@@ -117,6 +118,24 @@
       <option value="PriceUp">Giá từ thấp đến cao</option>
      </select>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 product__list">
+      </div>
+      <div class="view-product">
+        <div class="view-content">
+          <i class="fas fa-xmark"></i>
+          <div class="view-header">
+            <h2 class="view-title">Nike Free Metcon 4</h2>
+          </div>
+          <div class="view-body">
+            <div class="view-left">
+              <img src="https://static.nike.com/a/images/q_auto:eco/t_product_v1/f_auto/dpr_1.0/w_411,c_limit/478da795-70af-42ce-993f-fe71c83dc234/free-metcon-4-training-shoes-hr4JbW.png" alt="images"  id="image" class="zoom" data-magnify-src="https://static.nike.com/a/images/q_auto:eco/t_product_v1/f_auto/dpr_1.0/w_411,c_limit/478da795-70af-42ce-993f-fe71c83dc234/free-metcon-4-training-shoes-hr4JbW.png">
+            </div>
+            <div class="view-right">
+              <p>The Nike Free Metcon 4 combines flexibility with stability to help you get the most out of your training programme. Updated "chain-link" mesh cools and flexes as you speed through agility drills, while support at the midfoot and heel braces you for your heaviest sets in the weight room.</p>
+              <p class="view-price">Giá: 1.000.000đ</p>
+              <button class="btn_primary">Add cart</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -168,7 +187,7 @@
       <div class="container">
         <section class="footer__links">
             <div class="footer__item">
-              <img src="./assets/icons/icon.png" alt="logo">
+              <img src="../assets/icons/icon.png" alt="logo">
               <ul>
                 <li>
                   <i class="fas fa-phone"></i>
@@ -251,7 +270,7 @@
 </body>
 <!-- Zoom JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" charset="utf-8"></script>
-    <script src="./components/jquery.magnify.js" charset="utf-8"></script>
+    <script src="../components/jquery.magnify.js" charset="utf-8"></script>
     <script>
     $(document).ready(function() {
       $('.zoom').magnify();
@@ -263,7 +282,8 @@
     header.classList.toggle("fixed-nav",this.window.scrollY>0);
 })
 </script> -->
-<!-- <script type="module" src="../components/home/cart.js"></script> -->
-<script type="module"  src="./components/home/index.js"></script>
+<script src="../components/scroll.js"></script>
+<!-- <script src="../components/theme.js"></script> -->
+<script type="module"  src="../components/home/index.js"></script>
 <!-- Sweet alert -->
 </html>

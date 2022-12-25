@@ -4,7 +4,9 @@ import {
 import{
   loader
 }from "../home/loader.js"
-
+import{
+  randomNoti
+}from "../notification.js"
 export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
 const productList = document.querySelector(".product__list");
 // const objProduct = {
@@ -67,6 +69,7 @@ export async function getFullProduct() {
   renderOption();
   addCart();
   sortPrice();
+  randomNoti();
 }
 
 // Option chọn sản phẩm
@@ -171,7 +174,7 @@ window.onload = ()=>{
   }
   else{
     let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
-    <img src="./assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
+    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
     document.querySelector(".cartPage__body").style.display = "none";
     document.querySelector(".cartPage__footer").style.display = "none";
     document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);

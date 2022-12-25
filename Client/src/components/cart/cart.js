@@ -200,13 +200,13 @@ function minusProduct() {
 }
 
 // Lưu vào localStorage
-function setLocalStorage(value) {
-  localStorage.setItem("product", JSON.stringify(value))
+export function setLocalStorage(key,value) {
+  localStorage.setItem(key, JSON.stringify(value))
 }
-export function getLocalStorage() {
-  let productListJson = localStorage.getItem("product");
-  if (!productListJson) return [];
-  return JSON.parse(productListJson);
+export function getLocalStorage(value) {
+  let local = localStorage.getItem(value);
+  if (!local) return [];
+  return JSON.parse(local);
 }
 // Map dữ liệu
 export function mapProductList(local) {
