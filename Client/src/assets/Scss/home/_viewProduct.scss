@@ -9,18 +9,26 @@
 	z-index: 999999;
 	display: flex;
 	align-items: center;
-	// opacity: 0;
-	// pointer-events: none;
-	// transform: scale(0.8);
-	transition: 0.25s;
-  .view-content{
+  transform: scale(0.8);
+	opacity: 0;
+	pointer-events: none;
+	transition: var(--transition);
+  &.show{
+    pointer-events:all;
+    transform: scale(1);
+    opacity: 1;
+  }
+  .view-item{
     position: relative;
     padding: 3rem;
     background: #fff;
     width: 70%;
-    height: 70%;
     margin: auto;
     border-radius: 1rem;
+    display: none;
+    &.active{
+      display: block;
+    }
     .view-title{
       text-align: center;
       font-size: 3rem;

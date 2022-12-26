@@ -7,8 +7,12 @@ import{
 import{
   randomNoti
 }from "../notification.js"
+import{
+  showView
+}from "./viewProduct.js"
 export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
 const productList = document.querySelector(".product__list");
+const viewProductList = document.querySelector(".view-product")
 // const objProduct = {
 //   name,
 //   price,
@@ -19,9 +23,13 @@ const productList = document.querySelector(".product__list");
 // }
 
  function renderProduct(item) {
+  let convert = new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: 'VND'
+  });
   const template = `<div class="col">
           <div class="product__card">
-              <div class="product__card-item">
+              <div class="product__card-item" data-view="${item.id}">
                 <div class="product__card-img">
                 <img class="zoom" id="image" src="${item.img}" alt="image">
                 </div>
@@ -30,10 +38,7 @@ const productList = document.querySelector(".product__list");
                 <h3>${item.name}</h3>
                   <div class="text-group">
                     <h4 class="product__card-text">${item.category}</h4>
-                    <p class="product__card-price">${new Intl.NumberFormat('it-IT', {
-        style: 'currency',
-        currency: 'VND'
-      }).format(item.price)}</p>
+                    <p class="product__card-price">${convert.format(item.price)}</p>
                     </div>
                 </div>
                   <div class="btn-group d-flex justify-content-between align-items-center">
@@ -44,7 +49,27 @@ const productList = document.querySelector(".product__list");
               </div>
           </div>
         </div>`;
+
+        let templateView = `
+         <div class="view-item" data-view="${item.id}" >
+          <i class="fas fa-xmark view-close"></i>
+          <div class="view-header">
+            <h2 class="view-title">${item.name}</h2>
+          </div>
+          <div class="view-body">
+            <div class="view-left">
+              <img src="${item.img}" alt="images"  id="image" class="zoom" data-magnify-src="${item.img}">
+            </div>
+            <div class="view-right">
+              <p>${item.disc}</p>
+              <p class="view-price">Giá: ${convert.format(item.price)}</p>
+              <p class="view-amount">Kho: ${item.amount}</p>
+               <button class="btn_primary add-cart" data-id="${item.id}" type="button">Add to cart</button>
+            </div>
+          </div>
+        </div>`;
         productList.insertAdjacentHTML("beforeend",template);
+        viewProductList.insertAdjacentHTML("beforeend",templateView);
 }
 // Dùng set để xóa hết các phần tử trùng
 let options = new Set();
@@ -70,6 +95,8 @@ export async function getFullProduct() {
   addCart();
   sortPrice();
   randomNoti();
+  showView();
+
 }
 
 // Option chọn sản phẩm
@@ -93,19 +120,23 @@ function SortName(){
     let giaTri = e.options[e.selectedIndex].text;
     // console.log(giaTri)
     productList.innerHTML = "";
+    viewProductList.innerHTML ="";
     products.forEach(item=>{
       if(item.category.includes(giaTri)){
         // console.log(item)
         renderProduct(item);
-        
+        showView();
       }
       else if (giaTri=="All") {
         renderProduct(item);
+         showView();
+
       }
       // loader(false)
     })
     
   })
+  
 }
 // Sắp xếp theo giá
 function sortPrice(){
@@ -115,6 +146,8 @@ function sortPrice(){
     let giaTri = e.options[e.selectedIndex].text;
     let down = giaTri.toLowerCase().includes("cao đến thấp");
     productList.innerHTML = "";
+    viewProductList.innerHTML = "";
+
       if(down){
         for(let i=0;i<products.length;i++){
           for(let j=i+1;j<products.length;j++){
@@ -126,6 +159,8 @@ function sortPrice(){
             
           }
           renderProduct(products[i]);
+          showView();
+
           // console.log(products[i]);
         }
       }
@@ -140,6 +175,8 @@ function sortPrice(){
 
            }
            renderProduct(products[i]);
+            showView();
+
            // console.log(products[i]);
          }
       }
@@ -151,6 +188,8 @@ function seachProduct(){
   let search = document.querySelector(".search__input");
   search.addEventListener("input",()=>{
     productList.innerHTML = "";
+    viewProductList.innerHTML = "";
+
     // console.log(search.value)
    let userSearch =  products.filter((value)=>{
       return value.name.toLowerCase().includes(search.value.toLowerCase());
@@ -158,6 +197,8 @@ function seachProduct(){
   //  console.log(userSearch)
   userSearch.forEach(item=>{
     renderProduct(item)
+  showView();
+
     // console.log(item)
   })
 

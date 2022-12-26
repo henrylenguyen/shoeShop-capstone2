@@ -2,14 +2,14 @@ import{
 products
 }from "./Products/index.js"
 
-export function createNotification(name,img,disc) {
+export function createNotification(name,img,price) {
   let template = ` <div class="noti">
   <img class = "noti-image"
   src = "${img}"
   alt = "images" >
   <div class="noti-content">
   <h3 class="noti-title">${name}</h3>
-  <p class="noti-desc">${disc}</p>
+  <p class="noti-desc">Giá: ${price}</p>
   </div>
   </div>`;
   //insert sau khi mở thẻ body
