@@ -29,7 +29,7 @@
   box-shadow: 0px -5px 0px 0px #00d566, 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 }
 .sweet-alert.warning {
-  box-shadow: 0px -5px 0px 0px #e6ff04, 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px -5px 0px 0px #F5BD00, 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 }
 .sweet-alert.error {
   box-shadow: 0px -5px 0px 0px #ff0404, 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
@@ -54,7 +54,7 @@
   background: #00d566;
 }
 .sweet-alert .sweet-icon.warning {
-  background: #e6ff04;
+  background: #F5BD00;
 }
 .sweet-alert .sweet-icon.error {
   background: #ff0404;
@@ -71,7 +71,7 @@
   color: #00d566;
 }
 .sweet-alert .sweet-text h3.warning {
-  color: #e6ff04;
+  color: #F5BD00;
 }
 .sweet-alert .sweet-text h3.error {
   color: #ff0404;
@@ -259,6 +259,73 @@ html {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+:root {
+  --color1: #69c445;
+  --color2: #2a53cd;
+  --color3: #f5bd00;
+  --color4: #eb3941;
+}
+
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  background: #fff;
+  border-radius: 10px;
+}
+.modal-content {
+  padding: 50px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modal-content .modal-icon {
+  margin-top: -10rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 100px;
+  font-size: 7rem;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.modal-content .modal-title {
+  margin: 3rem 0;
+  font-size: 3rem;
+  text-transform: uppercase;
+  text-align: center;
+}
+.modal-content .modal-text {
+  font-size: 20px;
+  line-height: 1.5;
+  text-align: center;
+  color: #333;
+  margin-bottom: 3rem;
+}
+.modal-content .btn-group {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+.modal-content .btn-group .btn {
+  padding: 1.5rem 5rem;
+  font-size: 2rem;
+  color: #fff;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}
+.modal-content .btn-group .btn.btn-submit {
+  background: var(--color1);
+}
+.modal-content .btn-group .btn.btn-cancel {
+  background: var(--color4);
 }
 
 body::-webkit-scrollbar {

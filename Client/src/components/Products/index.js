@@ -10,6 +10,9 @@ import{
 import{
   showView
 }from "./viewProduct.js"
+import{
+  renderSweetAlertError
+}from "../home/sweetAlert.js"
 export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
 const productList = document.querySelector(".product__list");
 const viewProductList = document.querySelector(".view-product")
@@ -77,18 +80,23 @@ export let products = [];
 
 export async function getFullProduct() {
   loader(true);
-  const respone = await fetch(enpoint);
-  const data = await respone.json();
-  // Kiểm tra xem có chắc chắn là có dữ liệu hay không, và dữ liệu đó có phải là mảng hay không rồi mới render ra giao diện
-  if(data.length>0 && Array.isArray(data)){
-    data.forEach(item=>{
-      renderProduct(item);
-      let convert = item.category.split(" ")[0].replace("'s", "");
-      // console.log(typeof convert);
-      // Thêm vào Set
-      options.add(convert);
-      products.push(item);
-    })
+  try {
+    const respone = await fetch(enpoint);
+    const data = await respone.json();
+    // Kiểm tra xem có chắc chắn là có dữ liệu hay không, và dữ liệu đó có phải là mảng hay không rồi mới render ra giao diện
+    if (data.length > 0 && Array.isArray(data)) {
+      data.forEach(item => {
+        renderProduct(item);
+        let convert = item.category.split(" ")[0].replace("'s", "");
+        // console.log(typeof convert);
+        // Thêm vào Set
+        options.add(convert);
+        products.push(item);
+      })
+    }
+  } catch (error) {
+   renderSweetAlertError("Có lỗi xảy ra với hệ thống");
+  //  document.body.innerHTML = "";
   }
   loader(false);
   renderOption();

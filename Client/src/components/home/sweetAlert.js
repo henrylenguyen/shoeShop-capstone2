@@ -10,16 +10,18 @@ export function renderSweetAlertSuccess() {
   </div>
 </div>`;
   document.body.insertAdjacentHTML("afterbegin", templateWeetAlert);
+  deleteAlert();
 }
-export function renderSweetAlertWarning(){
+export function renderSweetAlertWarning(text = alert2) {
   const templateWeetAlert = `<div class="sweet-alert warning">
   <i class="fa-solid fa-triangle-exclamation sweet-icon warning"></i>
   <div class="sweet-text">
     <h3 class="sweet-title warning">Thông báo từ hệ thống</h3>
-    <p class="sweet-content">${alert2}</p>
+    <p class="sweet-content">${text}</p>
   </div>
 </div>`;
   document.body.insertAdjacentHTML("afterbegin", templateWeetAlert);
+  deleteAlert();
 }
 export function renderSweetAlertError(text = alert2){
   const templateWeetAlert = `<div class="sweet-alert error">
@@ -30,4 +32,13 @@ export function renderSweetAlertError(text = alert2){
   </div>
 </div>`;
   document.body.insertAdjacentHTML("afterbegin", templateWeetAlert);
+  deleteAlert(".sweet-alert");
+}
+export function deleteAlert(value){
+  setInterval(()=>{
+   let deleteValue = document.querySelector(value);
+    if (deleteValue) {
+      sweet.parentNode.removeChild(deleteValue);
+    }
+ },4000)
 }
