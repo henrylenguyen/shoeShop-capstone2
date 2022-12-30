@@ -5,16 +5,12 @@ import {
 } from "../home/sweetAlert.js"
 import {
   products,
-  enpoint
+  enpoint,
+  notHaveProduct
 } from "../Products/index.js"
-import {
-  listProduct
-} from "../Products/list.js"
-import{
-  createModal
-}from "../modal.js"
+// tạo biến productListCart để lưu trữ dữ liệu của giỏ hàng
+export let productListCart = [];
 
-// let success = new renderSweetAlertSuccess()
 let cart = document.querySelector(".cart");
 let btnClose = document.querySelector(".cartPage__close");
 let like = document.querySelectorAll(".add-like");
@@ -53,70 +49,85 @@ let convert = new Intl.NumberFormat('it-IT', {
 // Sử lí thêm sản phẩm vào giỏ hàng
 export function renderCart() {
   let templateCart = '';
-  let cardBody = document.querySelector(".cart-body");
+
+  let cardBodyProduct = document.querySelector(".cart-body");
+  let cardBody = document.querySelector(".cartPage__body");
   // let totalProduct = item.price;
   // Lặp qua mảng giỏ hàng
-  for (let i = 0; i < productListCart.length; i++) {
-    let priceProduct = +productListCart[i].productCard[i].price * +productListCart[i].quanlity;
-    templateCart += `<tr class="main-cart">
+
+  if (productListCart.length == 0) {
+    notHaveProduct();
+
+  } else {
+    for (let i = 0; i < productListCart.length; i++) {
+      let priceProduct = +productListCart[i].productCard[0].price * +productListCart[i].quanlity;
+      let dataID = productListCart[i].productCard[0].id
+      templateCart += `<tr class="main-cart">
                     <td>
-                      <span class="custom-checkbox">
-                        <input type="checkbox" id="select">
-                        <label for="select"></label>
+                      <span class="custom-checkbox">    
+                      <input type="checkbox" class="check-cart" id="select" data-checkbox="${dataID}">
+                        <label class = "check-box" for="select">
+                        </label>
                       </span>
                     </td>
                     <td>
                       <div class="product__name">
-                        <img class="imgCart" src="${productListCart[i].productCard[i].img}" alt="image">
-                        <span class="name">${productListCart[i].productCard[i].name}</span>
+                        <img class="imgCart" src="${productListCart[i].productCard[0].img}" alt="image">
+                        <span class="name">${productListCart[i].productCard[0].name}</span>
                       </div>
                     </td>
-                    <td><span class="price">${convert.format(productListCart[i].productCard[i].price)}</span></td>
+                    <td><span class="price">${convert.format(productListCart[i].productCard[0].price)}</span></td>
                     <td>
                       <div class="amount">
-                      <button class="minus"  id="minus"  data-mcart="${productListCart[i].productCard[i].id}"> <i class="fa-solid fa-minus"></i></button>
+                      <button class="minus"  id="minus"  data-mcart="${dataID}"> <i class="fa-solid fa-minus"></i></button>
                       <input type="text" id="mount" value="${productListCart[i].quanlity}">
-                      <button class="plus" id="plus" data-pcart="${productListCart[i].productCard[i].id}"><i class="fa-solid fa-plus"></i></button>
+                      <button class="plus" id="plus" data-pcart="${dataID}"><i class="fa-solid fa-plus"></i></button>
                       </div>
                     </td>
                     <td>
                    <span class="totalProduct"> ${convert.format(priceProduct)}</span>
                     
                     </td>
-                    <td><i class="fa-solid fa-trash "></i></td>
+                    <td><i class="fa-solid fa-trash text-danger cart__delete"  data-dcart="${dataID}"></i></td>
                   </tr>`;
 
-    cardBody.innerHTML = templateCart;  
+      cardBodyProduct.innerHTML = templateCart;
+    }
+    cardBody.style.display = "flex";
+    document.querySelector(".cartPage__footer").style.display = "block";
+    let sad = document.querySelectorAll(".sad");
+    sad.forEach(item => {
+      item.style.display = "none";
+    });
+    // let amoutCart = document.querySelector("#mount").value;
+    plusAmount();
+    minusAmount();
+    deleteProduct();
+    // deleteByCheckBox();
+    // selectedAll();
+    btnDeleleEvent();
+    totalProduct();
+    paidCard();
   }
-  document.querySelector(".cartPage__body").style.display = "flex";
-  document.querySelector(".cartPage__footer").style.display = "block";
-  let sad = document.querySelectorAll(".sad");
-  sad.forEach(item => {
-    item.style.display = "none";
-  });
-  // let amoutCart = document.querySelector("#mount").value;
+  setLocalStorage("cart", productListCart);
   document.querySelector(".quantityOfProducts").innerHTML = productListCart.length;
-  totalProduct();
-  // setLocalStorage({...obj});
-  plusAmount();
-  minusAmount();
 }
-// tạo biến productListCart để lưu trữ dữ liệu của giỏ hàng
-let productListCart = [];
+
 export function addCart() {
-  // tạo 1 object chứa đựng cả mảng sản phẩm và số lượng
-  let objCart = {
-    productCard: [],
-    quanlity: 1
-  }
+
   // DOM các nút bấm trong html
   let button = document.querySelectorAll(".add-cart");
   [...button].forEach(item => {
     item.addEventListener("click", () => {
+      // tạo 1 object chứa đựng cả mảng sản phẩm và số lượng
+      let objCart = {
+        productCard: [],
+        quanlity: 1
+      }
       //so sánh dataset của nút bấm thêm vào giỏ hàng
       const id = +item.dataset.id;
       for (let j = 0; j < productListCart.length; j++) {
-        if (+productListCart[j].productCard[j].id == id) {
+        if (+productListCart[j].productCard[0].id == id) {
           // thông báo và ngừng lun chương trình để cho người dùng biết là đang có sản phẩm đó trong giỏ hàng. Người dùng có thể vào giỏ hàng để thêm số lượng
           renderSweetAlertWarning("Đã có sản phẩm trong giỏ hàng");
           return;
@@ -127,21 +138,16 @@ export function addCart() {
         if (id == products[i].id) {
           // thêm sản phẩm vào trong đối tượng 
           objCart.productCard.push(products[i]);
-          console.log(objCart)
+          // console.log(objCart)
           //Sau đó đẩy cả đối tượng card vào mảng global
           productListCart.push(objCart);
           renderSweetAlertSuccess();
-          renderCart();
-         
-
-          console.log(productListCart);
-
+          // console.log(productListCart);
         }
       }
-
+      renderCart();
     })
   })
-
 }
 
 // ----------------------------- TỔNG TIỀN -------------------------------------------
@@ -149,11 +155,13 @@ function totalProduct() {
   // console.log(intoMoney)
   let total = 0;
   for (let i = 0; i < productListCart.length; i++) {
-    total += productListCart[i].productCard[i].price *productListCart[i].quanlity;
+    total += productListCart[i].productCard[0].price * productListCart[i].quanlity;
   }
 
 
   document.querySelector("#totalProduct").innerHTML = convert.format(total);
+  // console.log(total);
+  return total;
 }
 
 // ----------------------------------- TĂNG SẢN PHẨM--------------------------------------
@@ -162,37 +170,35 @@ function plusAmount() {
   let sum = 0;
   [...plus].forEach(item => {
     item.addEventListener("click", (e) => {
-      console.log(item)
+      // console.log(item)
       const id = +item.dataset.pcart;
       for (let i = 0; i < productListCart.length; i++) {
-        let amount = productListCart[i].productCard[i].amount;
-        
-        if (id == +productListCart[i].productCard[i].id) {
-              console.log(id)
-              console.log(id, productListCart)
-              // if (productListCart[i].quanlity >= amount) {
-              //   renderSweetAlertError(`Bạn chỉ được mua tối đa ${amount} trong 1 đơn hàng`);
-              //   productListCart[i].quanlity = amount;
-              //   item.disabled = true;
-              //   item.style.pointerEvents ="none";
-              //   // renderCart();
-              //   return;
-              // } else {
-              //   productListCart[i].quanlity++;
-              //   console.log(productListCart[i]);
-              //   renderCart();
-              //   // break;
-              // }
-            }
-            // else{
-            //   return;
-            // }
-        //     // console.log(item)
+        let amount = productListCart[i].productCard[0].amount;
+
+        if (id == +productListCart[i].productCard[0].id) {
+          // console.log(id)
+          // console.log(id, productListCart)
+          if (productListCart[i].quanlity >= amount) {
+            renderSweetAlertError(`Bạn chỉ được mua tối đa ${amount} trong 1 đơn hàng`);
+            productListCart[i].quanlity = amount;
+            item.disabled = true;
+            item.style.pointerEvents = "none";
+            // renderCart();
+            return;
+          } else {
+            productListCart[i].quanlity++;
+            // console.log(productListCart);
+            renderCart();
           }
+        }
+        // console.log(item)
+      }
+      // renderCart();
+
     })
   })
 }
-  
+
 
 //------------------------------------GIẢM SẢN PHẨM------------------------------
 function minusAmount() {
@@ -200,14 +206,46 @@ function minusAmount() {
   for (let i = 0; i < productListCart.length; i++) {
     minus.forEach(item => {
       item.addEventListener("click", () => {
-        if (+item.dataset.mcart == +productListCart[i].productCard[i].id) {
+        if (+item.dataset.mcart == +productListCart[i].productCard[0].id) {
           if (productListCart[i].quanlity <= 1) {
-            productListCart[i].quanlity = 1;
+            const swalWithBootstrapButtons = Swal.mixin({
+              customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+              },
+              buttonsStyling: false
+            })
 
-            // item.disabled = true;
-            // item.style.pointerEvents = "none";
-            // renderCart();
-            createModal("infor","Bạn có chắc muốn xóa?","Bạn sẽ không thể hoàn tác khi xóa","Xóa thành công!","Dữ liệu của bạn đã bị xóa")
+            swalWithBootstrapButtons.fire({
+              title: 'Bạn có chắc muốn xóa',
+              text: "Bạn sẽ không thể hoàn tác khi đã xóa",
+              icon: 'question',
+              width: '50rem',
+              showCancelButton: true,
+              confirmButtonText: 'Tiếp tục',
+              cancelButtonText: 'Hủy',
+              reverseButtons: true
+            }).then((result) => {
+              if (result.isConfirmed) {
+                productListCart.splice(productListCart[i], 1);
+                renderCart();
+                swalWithBootstrapButtons.fire(
+                  'Đã xóa!',
+                  'Sản phẩm của bạn đã bị xóa',
+                  'success'
+                )
+              } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+              ) {
+                swalWithBootstrapButtons.fire(
+                  'Đã hủy',
+                  'Sản phẩm của bạn vẫn còn nhé!',
+                  'error'
+                )
+              }
+            })
+
             return;
           } else {
             productListCart[i].quanlity--;
@@ -222,7 +260,229 @@ function minusAmount() {
   }
 
 }
+// ----------------------------------XÓA SẢN PHẨM ----------------------------------
+function deleteProductCheckID(id) {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  })
 
+  swalWithBootstrapButtons.fire({
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutUp'
+    },
+    title: 'Bạn có chắc muốn xóa',
+    text: "Bạn sẽ không thể hoàn tác khi đã xóa",
+    icon: 'question',
+    width: '50rem',
+    showCancelButton: true,
+    confirmButtonText: 'Tiếp tục',
+    cancelButtonText: 'Hủy',
+    reverseButtons: true
+
+  }).then((result) => {
+    if (result.isConfirmed) {
+      productListCart.splice(productListCart[id], 1);
+      renderCart();
+      swalWithBootstrapButtons.fire(
+        'Đã xóa!',
+        'Sản phẩm của bạn đã bị xóa',
+        'success'
+      )
+    } else if (
+      /* Read more about handling dismissals below */
+      result.dismiss === Swal.DismissReason.cancel
+    ) {
+      swalWithBootstrapButtons.fire(
+        'Đã hủy',
+        'Sản phẩm của bạn vẫn còn nhé!',
+        'error'
+      )
+    }
+  })
+}
+// function deleteAllCart(){
+//   let deleteAll =  document.querySelector("")
+//   productListCart.splice(0,productListCart.length);
+// }
+
+function btnDeleleEvent() {
+  deleteByCheckBox();
+  let btnDelete = document.querySelector(".btn-deleteCheck");
+  let selectAll = document.querySelector("#SelectAll");
+  btnDelete.addEventListener("click", () => {
+    console.log(checkArr);
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+    })
+
+    swalWithBootstrapButtons.fire({
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+      },
+      title: 'Bạn có chắc muốn xóa những sản phẩm đã chọn?',
+      text: "Bạn sẽ không thể hoàn tác khi đã xóa",
+      icon: 'question',
+      width: '50rem',
+      showCancelButton: true,
+      confirmButtonText: 'Tiếp tục',
+      cancelButtonText: 'Hủy',
+      reverseButtons: true
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newArr = productListCart.filter(item => !checkArr.includes(item));
+        productListCart = newArr;
+        checkArr = [];
+        selectAll.checked = false;
+        // console.log(newArr);
+        renderCart();
+        swalWithBootstrapButtons.fire(
+          'Đã xóa!',
+          'Sản phẩm của bạn đã bị xóa',
+          'success'
+        )
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          'Đã hủy',
+          'Sản phẩm của bạn vẫn còn nhé!',
+          'error'
+        )
+      }
+    })
+  })
+}
+// ---------------------------------CHỌN TẤT CẢ--------------------------------------
+// function selectedAll(){
+
+//   return checkArr;
+// }
+let checkArr = [];
+function deleteByCheckBox() {
+  let check = document.querySelectorAll(".check-cart");
+  [...check].forEach(item => {
+    // console.log(item);
+    item.addEventListener("click", () => {
+      // item.checked = "true";
+      if (item.checked) {
+        const idcheck = +item.dataset.checkbox;
+        for (let i = 0; i < productListCart.length; i++) {
+          if (idcheck == +productListCart[i].productCard[0].id) {
+            checkArr.push(productListCart[i]);
+          }
+        }
+      }
+    })
+  })
+  let selectAll = document.querySelector("#SelectAll");
+  let select = document.querySelectorAll(".check-cart");
+  selectAll.addEventListener("click", () => {
+    if (selectAll.checked) {
+      select.forEach(item => {
+        console.log(item);
+        item.checked = true;
+        const idcheck = +item.dataset.checkbox;
+        for (let i = 0; i < productListCart.length; i++) {
+          if (idcheck == +productListCart[i].productCard[0].id) {
+            checkArr.push(productListCart[i]);
+          }
+        }
+      })
+    } else if (!selectAll.checked) {
+      select.forEach(item => {
+        item.checked = false;
+        // console.log(item.checked);
+      })
+    }
+  })
+
+}
+// -------------------------------------THANH TOÁN GIỎ HÀNG-----------------------------
+export function paidCard() {
+  let total = totalProduct();
+  let paid = document.querySelector(".btn-paidCart");
+  paid.addEventListener("click", () => {
+
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+    })
+
+    swalWithBootstrapButtons.fire({
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+      },
+      title: 'Kiểm tra lại đơn hàng',
+      text: `Tổng đơn hàng của bạn là: ${convert.format(total)}`,
+      icon: 'info',
+      width: '50rem',
+      showCancelButton: true,
+      confirmButtonText: 'Thanh toán',
+      cancelButtonText: 'Không mua nữa',
+      reverseButtons: true
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+        productListCart.splice(0, productListCart.length);
+        renderCart();
+        document.querySelector(".cartPage__overlay").style.display = "none";
+        paid.parentElement.parentElement.classList.remove("active");
+        swalWithBootstrapButtons.fire(
+          'Cảm ơn bạn đã tin tưởng chúng tôi!',
+          'Đơn hàng của bạn sớm được giao',
+          'success'
+        )
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire({
+          html: 'Mua hàng ủng hộ em đi mà <i class="fa-solid fa-face-sad-cry"></i>',
+          imageUrl: 'https://media.tenor.com/6YHr_m3OOKQAAAAC/himouto-umaru-chan-crying.gif',
+          imageWidth: 400,
+          imageHeight: 200,
+          imageAlt: 'Custom image',
+        })
+      }
+    })
+  })
+
+}
+export function deleteProduct() {
+  let deleteCart = document.querySelectorAll(".cart__delete");
+  for (let i = 0; i < productListCart.length; i++) {
+    deleteCart.forEach(item => {
+      item.addEventListener("click", () => {
+        if (+item.dataset.dcart == +productListCart[i].productCard[0].id) {
+          deleteProductCheckID(i);
+        }
+      })
+    })
+  }
+
+}
 // ------------------------------------SỬ LÝ LOCALSTORAGE---------------------------
 
 // Lưu vào localStorage
@@ -233,23 +493,4 @@ export function getLocalStorage(value) {
   let local = localStorage.getItem(value);
   if (!local) return [];
   return JSON.parse(local);
-}
-// Map dữ liệu
-export function mapProductList(local) {
-  let result = [];
-  for (let i = 0; i < local.length; i++) {
-    let oldProduct = local[i];
-    let newProduct = new staffList(
-      oldProduct.id,
-      oldProduct.name,
-      oldProduct.price,
-      oldProduct.disc,
-      oldProduct.img,
-      oldProduct.amount,
-      oldProduct.category,
-    );
-    result.push(newProduct);
-  }
-
-  return result;
 }

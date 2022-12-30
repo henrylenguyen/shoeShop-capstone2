@@ -1,31 +1,35 @@
+
 import {
   renderCart,
   addCart,
-  mapProductList,
-  getLocalStorage
+  getLocalStorage,
+  productListCart,
+  paidCard
 } from "../cart/cart.js"
 import {
   loader
 } from "../home/loader.js"
 import {
-  toggleMode
-} from "../theme.js"
-
-export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
-const productList = document.querySelector(".product__list");
-// const objProduct = {
-//   name,
-//   price,
-//   disc,
-//   img,
-//   amount,
-//   category
-// }
-
+  randomNoti
+} from "../notification.js"
+import {
+  showView
+} from "../Products/viewProduct.js"
+import {
+  renderSweetAlertError
+} from "../home/sweetAlert.js"
+import{
+  seachProduct, sortPrice, enpoint, productList, viewProductList, products
+}from "../Products/index.js"
+// ----------------------------- HÀM TẠO SẢN PHẨM -----------------------
 function renderProduct(item) {
+  let convert = new Intl.NumberFormat('it-IT', {
+    style: 'currency',
+    currency: 'VND'
+  });
   const template = `<div class="col">
           <div class="product__card">
-              <div class="product__card-item">
+              <div class="product__card-item" data-view="${item.id}">
                 <div class="product__card-img">
                 <img class="zoom" id="image" src="${item.img}" alt="image">
                 </div>
@@ -34,10 +38,7 @@ function renderProduct(item) {
                 <h3>${item.name}</h3>
                   <div class="text-group">
                     <h4 class="product__card-text">${item.category}</h4>
-                    <p class="product__card-price">${new Intl.NumberFormat('it-IT', {
-        style: 'currency',
-        currency: 'VND'
-      }).format(item.price)}</p>
+                    <p class="product__card-price">${convert.format(item.price)}</p>
                     </div>
                 </div>
                   <div class="btn-group d-flex justify-content-between align-items-center">
@@ -48,107 +49,88 @@ function renderProduct(item) {
               </div>
           </div>
         </div>`;
+
+  let templateView = `
+         <div class="view-item" data-view="${item.id}" >
+          <i class="fas fa-xmark view-close"></i>
+          <div class="view-header">
+            <h2 class="view-title">${item.name}</h2>
+          </div>
+          <div class="view-body">
+            <div class="view-left">
+              <img src="${item.img}" alt="images"  id="image" class="zoom" data-magnify-src="${item.img}">
+            </div>
+            <div class="view-right">
+              <p>${item.disc}</p>
+              <p class="view-price">Giá: ${convert.format(item.price)}</p>
+              <p class="view-amount">Kho: ${item.amount}</p>
+               <button class="btn_primary add-cart" data-id="${item.id}" type="button">Add to cart</button>
+            </div>
+          </div>
+        </div>`;
   productList.insertAdjacentHTML("beforeend", template);
+  viewProductList.insertAdjacentHTML("beforeend", templateView);
 }
-// Dùng set để xóa hết các phần tử trùng
-let options = new Set();
-export let products = [];
 
-export async function getFullProduct() {
+// -------------------------------- LẤY DANH SÁCH SẢN PHẨM TỪ API ---------------------
+async function getFullProduct() {
   loader(true);
-  const respone = await fetch(enpoint);
-  const data = await respone.json();
-  // Kiểm tra xem có chắc chắn là có dữ liệu hay không, và dữ liệu đó có phải là mảng hay không rồi mới render ra giao diện
-  if (data.length > 0 && Array.isArray(data)) {
-    data.forEach(item => {
-      if (item.category.includes("Kid")) {
-        // console.log(item)
-        renderProduct(item);
-        products.push(item);
-        let convert = item.category.split(" ")[0].replace("'s", "");
-        options.add(convert);
-
-      }
-      // console.log(typeof convert);
-      // Thêm vào Set
-    })
+  try {
+    const respone = await fetch(enpoint);
+    const data = await respone.json();
+    // Kiểm tra xem có chắc chắn là có dữ liệu hay không, và dữ liệu đó có phải là mảng hay không rồi mới render ra giao diện
+    if (data.length > 0 && Array.isArray(data)) {
+      data.forEach(item => {
+        if (item.category.includes("Kid")) {
+          renderProduct(item);
+          let convert = item.category.split(" ")[0].replace("'s", "");
+          // console.log(typeof convert);
+          // Thêm vào Set
+          // options.add(convert);
+          products.push(item);
+          // console.log(products);
+        }
+      })
+    }
+  } catch (error) {
+    renderSweetAlertError("Có lỗi xảy ra với hệ thống");
+    //  document.body.innerHTML = "";
+    console.log(error)
   }
   loader(false);
   addCart();
   sortPrice();
-}
-// Sắp xếp theo giá
-function sortPrice() {
-  let tempt = [];
-  let e = document.getElementById("price__select");
-  e.addEventListener("change", () => {
-    let giaTri = e.options[e.selectedIndex].text;
-    let down = giaTri.toLowerCase().includes("cao đến thấp");
-    productList.innerHTML = "";
-    if (down) {
-      for (let i = 0; i < products.length; i++) {
-        for (let j = i + 1; j < products.length; j++) {
-          if (products[j].price > products[i].price) {
-            tempt = products[j];
-            products[j] = products[i];
-            products[i] = tempt;
-          }
+  randomNoti();
+  showView();
 
-        }
-        renderProduct(products[i]);
-        // console.log(products[i]);
-      }
-    } else {
-      for (let i = 0; i < products.length; i++) {
-        for (let j = i + 1; j < products.length; j++) {
-          if (products[j].price < products[i].price) {
-            tempt = products[j];
-            products[j] = products[i];
-            products[i] = tempt;
-          }
-
-        }
-        renderProduct(products[i]);
-        // console.log(products[i]);
-      }
-    }
-  })
 }
 
-// Tìm kiếm sản phẩm
-function seachProduct() {
-  let search = document.querySelector(".search__input");
-  search.addEventListener("input", () => {
-    productList.innerHTML = "";
-    // console.log(search.value)
-    let userSearch = products.filter((value) => {
-      return value.name.toLowerCase().includes(search.value.toLowerCase());
-    })
-    //  console.log(userSearch)
-    userSearch.forEach(item => {
-      renderProduct(item)
-      // console.log(item)
-    })
 
-  })
+// -------------------------- Khi chưa có sản phẩm trong giỏ hàng-----------------
+
+export function notHaveProduct() {
+  let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
+    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
+  document.querySelector(".cartPage__body").style.display = "none";
+  document.querySelector(".cartPage__footer").style.display = "none";
+  document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);
 }
-toggleMode();
+
+// -------------------------------- Khi window load xong--------------------------
 window.onload = () => {
+  let productListFromLocal;
   getFullProduct();
   seachProduct();
-  let productListFromLocal = getLocalStorage();
+  productListFromLocal = getLocalStorage("cart");
   if (productListFromLocal.length > 0 && Array.isArray(productListFromLocal)) {
     productListFromLocal.forEach(item => {
-      renderCart(item);
+      productListCart.push(item);
+      renderCart();
+      paidCard();
     })
   } else {
-    let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
-    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
-    document.querySelector(".cartPage__body").style.display = "none";
-    document.querySelector(".cartPage__footer").style.display = "none";
-    document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);
+    notHaveProduct();
   }
   document.querySelector(".quantityOfProducts").innerHTML = productListFromLocal.length;
   // let mapProductList();
-  // console.log(productListFromLocal.length);
 }

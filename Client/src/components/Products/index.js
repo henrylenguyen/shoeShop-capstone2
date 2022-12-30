@@ -1,5 +1,5 @@
 import {
-   renderCart, addCart, mapProductList, getLocalStorage
+   renderCart, addCart, getLocalStorage, productListCart, paidCard
 } from "../cart/cart.js"
 import{
   loader
@@ -13,18 +13,19 @@ import{
 import{
   renderSweetAlertError
 }from "../home/sweetAlert.js"
-export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
-const productList = document.querySelector(".product__list");
-const viewProductList = document.querySelector(".view-product")
-// const objProduct = {
-//   name,
-//   price,
-//   disc,
-//   img,
-//   amount,
-//   category
-// }
 
+
+export const enpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
+export const productList = document.querySelector(".product__list");
+export const viewProductList = document.querySelector(".view-product")
+// ------------------Dùng set để xóa hết các phần tử trùng---------------
+let options = new Set();
+export let products = [];
+
+
+
+
+// ----------------------------- HÀM TẠO SẢN PHẨM -----------------------
  function renderProduct(item) {
   let convert = new Intl.NumberFormat('it-IT', {
     style: 'currency',
@@ -74,10 +75,8 @@ const viewProductList = document.querySelector(".view-product")
         productList.insertAdjacentHTML("beforeend",template);
         viewProductList.insertAdjacentHTML("beforeend",templateView);
 }
-// Dùng set để xóa hết các phần tử trùng
-let options = new Set();
-export let products = [];
 
+// -------------------------------- LẤY DANH SÁCH SẢN PHẨM TỪ API ---------------------
 export async function getFullProduct() {
   loader(true);
   try {
@@ -92,6 +91,7 @@ export async function getFullProduct() {
         // Thêm vào Set
         options.add(convert);
         products.push(item);
+        // console.log(products);
       })
     }
   } catch (error) {
@@ -107,7 +107,8 @@ export async function getFullProduct() {
 
 }
 
-// Option chọn sản phẩm
+
+// ----------------------------Option chọn sản phẩm-------------------------
 let option = document.querySelector(".product__select");
 function renderOption(){
   options.forEach(item=>{
@@ -120,8 +121,9 @@ function renderOption(){
   })
   SortName();
 }
-// Sắp xếp sản phẩm theo giá
-function SortName(){
+
+// ------------------------------------ Sắp xếp sản phẩm theo tên ---------------------
+ function SortName(){
   let e = document.getElementById("product__select");
   e.addEventListener("change",()=>{
     // loader(true);
@@ -146,8 +148,8 @@ function SortName(){
   })
   
 }
-// Sắp xếp theo giá
-function sortPrice(){
+// ---------------------------------------------Sắp xếp theo giá-----------------------
+export function sortPrice(){
   let tempt = [];
   let e = document.getElementById("price__select");
   e.addEventListener("change", () => {
@@ -191,8 +193,8 @@ function sortPrice(){
   })
 }
 
-// Tìm kiếm sản phẩm
-function seachProduct(){
+// ----------------------------------Tìm kiếm sản phẩm-----------------------------------
+export function seachProduct(){
   let search = document.querySelector(".search__input");
   search.addEventListener("input",()=>{
     productList.innerHTML = "";
@@ -212,23 +214,31 @@ function seachProduct(){
 
   })
 }
+// -------------------------- Khi chưa có sản phẩm trong giỏ hàng-----------------
+
+export function notHaveProduct(){
+   let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
+    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
+   document.querySelector(".cartPage__body").style.display = "none";
+   document.querySelector(".cartPage__footer").style.display = "none";
+   document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);
+}
+
+// -------------------------------- Khi window load xong--------------------------
 window.onload = ()=>{
+  let productListFromLocal;
   getFullProduct();
   seachProduct();
-  let productListFromLocal = getLocalStorage();
+  productListFromLocal = getLocalStorage("cart");
   if(productListFromLocal.length>0 && Array.isArray(productListFromLocal)){
     productListFromLocal.forEach(item => {
-      renderCart(item);
+      productListCart.push(item);
+      renderCart();
     })
   }
   else{
-    let template = `<h3 class="sad" >Chưa có sản phẩm nào trong giỏ hàng</h3>
-    <img src="../assets/icons/sad.png" style="width:300px" class="mt-5 mx-auto sad"/>`
-    document.querySelector(".cartPage__body").style.display = "none";
-    document.querySelector(".cartPage__footer").style.display = "none";
-    document.querySelector(".cartPage__content").insertAdjacentHTML("beforeend", template);
+   notHaveProduct();
   }
   document.querySelector(".quantityOfProducts").innerHTML = productListFromLocal.length;
   // let mapProductList();
-  // console.log(productListFromLocal.length);
 }

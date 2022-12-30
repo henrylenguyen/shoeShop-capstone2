@@ -10,7 +10,7 @@ export function renderSweetAlertSuccess() {
   </div>
 </div>`;
   document.body.insertAdjacentHTML("afterbegin", templateWeetAlert);
-  deleteAlert();
+  deleteAlert(".sweet-alert");
 }
 export function renderSweetAlertWarning(text = alert2) {
   const templateWeetAlert = `<div class="sweet-alert warning">
@@ -21,7 +21,7 @@ export function renderSweetAlertWarning(text = alert2) {
   </div>
 </div>`;
   document.body.insertAdjacentHTML("afterbegin", templateWeetAlert);
-  deleteAlert();
+  deleteAlert(".sweet-alert");
 }
 export function renderSweetAlertError(text = alert2){
   const templateWeetAlert = `<div class="sweet-alert error">
@@ -35,10 +35,12 @@ export function renderSweetAlertError(text = alert2){
   deleteAlert(".sweet-alert");
 }
 export function deleteAlert(value){
-  setInterval(()=>{
-   let deleteValue = document.querySelector(value);
-    if (deleteValue) {
-      sweet.parentNode.removeChild(deleteValue);
-    }
- },4000)
+  const timmer = setTimeout(()=>{
+   let deleteValue = document.querySelectorAll(value);
+   deleteValue.forEach(item=>{
+     if (item) {
+       item.parentNode.removeChild(item);
+     }
+   })
+ },20000)
 }
