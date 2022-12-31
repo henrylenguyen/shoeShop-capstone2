@@ -65,8 +65,9 @@ export function renderCart() {
       templateCart += `<tr class="main-cart">
                     <td>
                       <span class="custom-checkbox">    
-                      <input type="checkbox" class="check-cart" id="select" data-checkbox="${dataID}">
-                        <label class = "check-box" for="select">
+                      <input type="checkbox" class="check-cart" id="select-${dataID}" data-checkbox="${dataID}">
+                        <label label class = "check-box"
+                        for = "select-${dataID}" >
                         </label>
                       </span>
                     </td>
@@ -317,7 +318,6 @@ function btnDeleleEvent() {
   let btnDelete = document.querySelector(".btn-deleteCheck");
   let selectAll = document.querySelector("#SelectAll");
   btnDelete.addEventListener("click", () => {
-    console.log(checkArr);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -346,7 +346,7 @@ function btnDeleleEvent() {
       if (result.isConfirmed) {
         const newArr = productListCart.filter(item => !checkArr.includes(item));
         productListCart = newArr;
-        checkArr = [];
+        checkArr.length = 0;
         selectAll.checked = false;
         // console.log(newArr);
         renderCart();
@@ -391,11 +391,10 @@ function deleteByCheckBox() {
     })
   })
   let selectAll = document.querySelector("#SelectAll");
-  let select = document.querySelectorAll(".check-cart");
   selectAll.addEventListener("click", () => {
     if (selectAll.checked) {
-      select.forEach(item => {
-        console.log(item);
+      check.forEach(item => {
+        // console.log(item);
         item.checked = true;
         const idcheck = +item.dataset.checkbox;
         for (let i = 0; i < productListCart.length; i++) {
@@ -403,13 +402,36 @@ function deleteByCheckBox() {
             checkArr.push(productListCart[i]);
           }
         }
+        // console.log(item);
+        
+        // ---------------------------lọc ra những phần tử trùng-------------------
+        let new2 = checkArr.filter((item, index) => checkArr.indexOf(item) === index);
+        checkArr = new2;
+        // console.log(new2);
+        item.addEventListener("click", () => {
+          if (!item.checked) {
+
+            // khi người dùng nhấn vào nút checkbox lần nữa 
+            //=> có nghĩa là người dùng đã xóa những phần tử đó ở trong mảng checkArr 
+            const idcheck = +item.dataset.checkbox;
+            for (let i = 0; i < checkArr.length; i++) {
+              if (idcheck == +checkArr[i].productCard[0].id){
+                //  productListCart.splice(productListCart[id], 1);
+                // checkArr.splice(checkArr[i],1);
+                console.log(checkArr[i])                      
+              }
+            }
+            console.log(checkArr)   
+          }
+      })
       })
     } else if (!selectAll.checked) {
-      select.forEach(item => {
+      check.forEach(item => {
         item.checked = false;
-        // console.log(item.checked);
+        checkArr.splice(0);
       })
     }
+    
   })
 
 }

@@ -31,7 +31,7 @@ export let products = [];
     style: 'currency',
     currency: 'VND'
   });
-  const template = `<div class="col">
+  const template = `<div class=" col-md-6 col-lg-4">
           <div class="product__card">
               <div class="product__card-item" data-view="${item.id}">
                 <div class="product__card-img">
