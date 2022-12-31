@@ -1,28 +1,51 @@
-export let layThongTinTuForm = () => {
-  // let id = document.getElementById("foodID").value;
-  let tenSP = document.getElementById("tenSP").value;
-  let giaSP = document.getElementById("giaSP").value;
-  let infoPro = document.getElementById("infoPro").value;
-  let soLuong = document.getElementById("soLuong").value;
-  let hinhSP = document.getElementById("hinhSP").value;
-  let moTa = document.getElementById("moTa").value;
+ const endpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
+let formsm = document.getElementById("productForm");
+// ----------------------------------- TẠO MỚI SẢN PHẨM-------------------------------
+
+async function addNewProduct({
+  name,
+  price,
+  disc,
+  category,
+  amount,
+  img,
+}) {
+  await fetch(endpoint, {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      price,
+      disc,
+      category,
+      amount,
+      img,
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+}
+formsm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const product = layThongTinTuForm();
+  // console.log(product);
+  await addNewProduct(product);
+  formsm.reset();
+})
+ function layThongTinTuForm() {
+  let name = document.getElementById("tenSP").value;
+  let price = +document.getElementById("giaSP").value;
+  let category = document.getElementById("theloaiSp").value;
+  let amount = +document.getElementById("soLuong").value;
+  let img = document.getElementById("hinhSP").value;
+  let disc = document.getElementById("moTa").value;
 
   return {
-    tenSP,
-    giaSP,
-    infoPro,
-    soLuong,
-    hinhSP,
-    moTa,
+     name,
+     price,
+     disc,
+     category,
+     amount,
+     img
   };
-};
-
-export let showThongTin = (object) => {
-  // document.getElementById("spMa").innerText = object.ma;
-  document.getElementById("spTenSP").innerText = object.name;
-  document.getElementById("spGia").innerText = object.price;
-  document.getElementById("infoPro").innerText = object.infoPro;
-  document.getElementById("imgSP").src = object.img;
-  document.getElementById("pMoTa").innerText = object.desc;
-  document.getElementById("spSoLuong").innerText = object.quantity;
 };
