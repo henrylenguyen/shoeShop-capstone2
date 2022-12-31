@@ -312,8 +312,7 @@ input[type=checkbox]:checked + .check-box::before,
   padding-bottom: 5rem;
 }
 .product__select, .product .price__select {
-  background: #f0f0f0;
-  width: 200px;
+  width: 250px;
 }
 .product__list {
   padding-top: 5rem;
@@ -336,31 +335,6 @@ input[type=checkbox]:checked + .check-box::before,
 .product__card img {
   height: 400px;
   width: 100%;
-}
-.product__card .magnify {
-  position: relative;
-}
-.product__card .magnify .magnifier {
-  height: 200px;
-  width: 200px;
-  position: absolute;
-  z-index: 20;
-  border: 4px solid white;
-  border-radius: 50%;
-  background-size: 1000%;
-  background-repeat: no-repeat;
-  margin-left: -100px !important;
-  margin-top: -100px !important;
-  pointer-events: none;
-  display: none;
-}
-.product__card .magnify .magnified {
-  display: block;
-  z-index: 10;
-  margin: auto;
-  width: 100%;
-  height: 100%;
-  border: 5px solid #fff;
 }
 .product__card-body {
   background: #fff;
@@ -403,7 +377,7 @@ input[type=checkbox]:checked + .check-box::before,
 .navbar__list {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-direction: row;
   flex-wrap: nowrap;
 }
@@ -957,6 +931,31 @@ html {
   flex-direction: column;
   justify-content: space-between;
 }
+.view-product .magnify {
+  position: relative;
+}
+.view-product .magnify .magnifier {
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  z-index: 20;
+  border: 4px solid white;
+  border-radius: 50%;
+  background-size: 1000%;
+  background-repeat: no-repeat;
+  margin-left: -100px !important;
+  margin-top: -100px !important;
+  pointer-events: none;
+  display: none;
+}
+.view-product .magnify .magnified {
+  display: block;
+  z-index: 10;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  border: 5px solid #fff;
+}
 
 .swal2-container.swal2-backdrop-show,
 .swal2-container.swal2-noanimation {
@@ -1065,6 +1064,10 @@ button.swal2-confirm.btn.btn-success {
   }
   .cartPage td, .cartPage tr, .cartPage th, .cartPage table {
     font-size: 1.3rem;
+  }
+  .product__select, .product .price__select {
+    background: #f0f0f0;
+    width: 150px;
   }
 }
 @media screen and (max-width: 480px) {
@@ -1310,6 +1313,96 @@ button.swal2-confirm.btn.btn-success {
     -webkit-animation: dothatopcheck 0.4s ease 0s forwards;
     animation: dothatopcheck 0.4s ease 0s forwards;
   }
+}
+html.magnifying > body {
+  overflow-x: hidden !important;
+}
+
+.magnify,
+.magnify > .magnify-lens,
+.magnify-mobile,
+.lens-mobile { /* Reset */
+  min-width: 0;
+  min-height: 0;
+  animation: none;
+  border: none;
+  float: none;
+  margin: 0;
+  opacity: 1;
+  outline: none;
+  overflow: visible;
+  padding: 0;
+  text-indent: 0;
+  transform: none;
+  transition: none;
+}
+
+.magnify {
+  position: relative;
+  width: auto;
+  height: auto;
+  box-shadow: none;
+  display: inline-block;
+  z-index: inherit;
+}
+
+.magnify > .magnify-lens { /* Magnifying lens */
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  /* Multiple box shadows to achieve the glass lens effect */
+  box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.85), 0 0 7px 7px rgba(0, 0, 0, 0.25), inset 0 0 40px 2px rgba(0, 0, 0, 0.25);
+  cursor: none;
+  display: none;
+  z-index: 99;
+}
+
+.magnify > .magnify-lens.loading {
+  background: #333 !important;
+  opacity: 0.8;
+}
+
+.magnify > .magnify-lens.loading:after { /* Loading text */
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  color: #fff;
+  content: "Loading...";
+  font: italic normal 16px/1 Calibri, sans-serif;
+  letter-spacing: 1px;
+  margin-top: -8px;
+  text-align: center;
+  text-shadow: 0 0 2px rgba(51, 51, 51, 0.8);
+  text-transform: none;
+}
+
+/* <select> styles */
+select {
+  /* Reset */
+  appearance: none;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  padding: 0 4em 0 1em;
+  color: #fff;
+  border-radius: 0.25em;
+  background: var(--background);
+  cursor: pointer;
+  /* <option> colors */
+  /* Remove focus outline */
+  /* Remove IE arrow */
+}
+select option {
+  color: inherit;
+  background-color: var(--five__color);
+}
+select:focus {
+  outline: none;
+}
+select::-ms-expand {
+  display: none;
 }
 
 /*# sourceMappingURL=style.css.map */

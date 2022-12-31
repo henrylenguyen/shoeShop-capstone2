@@ -22,7 +22,7 @@
   }
 
   &__list {
-    @include flexbox(center);
+    @include flexbox(center,center);
   }
 
   &__link {

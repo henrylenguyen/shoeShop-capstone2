@@ -47,6 +47,10 @@ width: 100%;
 .cartPage td, .cartPage tr, .cartPage th, .cartPage table {
     font-size: 1.3rem;
 }
+.product__select, .product .price__select {
+    background: #f0f0f0;
+    width: 150px;
+}
 }
 @media screen and (max-width: 480px) {
   
