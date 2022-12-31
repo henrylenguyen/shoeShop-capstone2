@@ -56,4 +56,32 @@
     
     }
   }
+  .magnify {
+      position: relative;
+
+      .magnifier {
+        height: 200px;
+        width: 200px;
+        position: absolute;
+        z-index: 20;
+        border: 4px solid white;
+        border-radius: 50%;
+        background-size: 1000%;
+        background-repeat: no-repeat;
+        margin-left: -100px !important;
+        margin-top: -100px !important;
+        pointer-events: none;
+        display: none;
+      }
+
+      .magnified {
+        display: block;
+        z-index: 10;
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        border: 5px solid #fff;
+      }
+    }
+
 }
