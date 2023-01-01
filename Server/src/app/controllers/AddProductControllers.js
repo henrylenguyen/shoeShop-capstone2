@@ -29,6 +29,11 @@ formsm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const product = layThongTinTuForm();
   // console.log(product);
+  Swal.fire(
+    'Thêm mới thành công',
+    'Sản phẩm đã được thêm mới, bạn hãy quay lại danh sách để xem',
+    'success'
+  )
   await addNewProduct(product);
   formsm.reset();
 })

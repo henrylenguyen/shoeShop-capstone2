@@ -1,7 +1,6 @@
 let updateId = null;
 let tbodyProduct = document.querySelector("#tbodyProduct");
  const endpoint = "https://639c3dee16d1763ab1438a00.mockapi.io/Products";
- let products = [];
 /**
  * 
  *  <th>Tên</th>
@@ -17,52 +16,51 @@ let tbodyProduct = document.querySelector("#tbodyProduct");
 
 // ---------------------------------LẤY SẢN PHẨM----------------------
   async function getFullProduct() {
+    loader(true);
   try {
+
     const respone = await fetch(endpoint);
     const data = await respone.json();
+    tbodyProduct.innerHTML = "";
     // Kiểm tra xem có chắc chắn là có dữ liệu hay không, và dữ liệu đó có phải là mảng hay không rồi mới render ra giao diện
     if (data.length > 0 && Array.isArray(data)) {
       data.forEach(item => {
-        products.push(item);
-        // console.log(products);
+        renderProduct(item);
       })
     }
-    renderProduct();
   } catch (error) {
     //  document.body.innerHTML = "";
     console.log(error);
   }
-
+  loader(false)
 }
 function renderProduct(item) {
   let convert = new Intl.NumberFormat('it-IT', {
     style: 'currency',
     currency: 'VND'
   });
-  let template = '';
-  for(let i=0;i<products.length;i++){
-    template+= `
+  let template = `
         <tr>
-                  <td class="product-name">${products[i].name}</td>
-                  <td class="product-price">${convert.format(products[i].price)}</td>
-                  <td class="product-disc">${products[i].disc}</td>
-                  <td class="product-category">${products[i].category}</td>
-                  <td class="product-amount">${products[i].amount}</td>
+                  <td class="product-name">${item.name}</td>
+                  <td class="product-price">${convert.format(item.price)}</td>
+                  <td class="product-disc">${item.disc}</td>
+                  <td class="product-category">${item.category}</td>
+                  <td class="product-amount">${item.amount}</td>
                   <td class="product-image">
-                    <img src="${products[i].img}" alt="image">
+                    <img src="${item.img}" alt="image">
                   </td>
                   <td class="d-flex justify-content-center flex-column product-setting">
-                    <button  class="btn-success product-update" data-update="${products[i].id}" type="button"
+                    <button button class = "btn-success product-update"
+                    onclick = "updateClick(${item.id})"
+                    type = "button"
                     data-toggle="modal"
                     data-target="#exampleModal">Sửa</button>
-                    <button class="btn-danger product-delete mt-2" data-delete="${products[i].id}">Xóa</button>
+                    <button class="btn-danger product-delete mt-2" onclick="deleteClick(${item.id})">Xóa</button>
                   </td>
                 </tr>
     `;
-    tbodyProduct.innerHTML = template;
+    tbodyProduct.insertAdjacentHTML("beforeend", template);
   }
-  updateClick();
-}
 // ----------------------------------- SỬA SẢN PHẨM -----------------------------------
 async function updateProduct({
   id,
@@ -90,7 +88,7 @@ async function updateProduct({
 }
 
 // ----------------------------------- XÓA SẢN PHẨM -------------------------------
-async function deleteCourse(id) {
+async function deleteProduct(id) {
   await fetch(`${endpoint}/${id}`, {
     method: "DELETE",
   });
@@ -102,12 +100,7 @@ async function getSingleProduct(id) {
 }
 
 
-function updateClick() {
- 
-  let update = document.querySelectorAll(".product-update");
-  [...update].forEach(item => {
-    item.addEventListener("click", async function (e) {
-        const id = +item.dataset.update;
+async function updateClick(id) {
         const data = await getSingleProduct(id);
          document.getElementById("tenSP").value = data.name;
          document.getElementById("giaSP").value = data.price;
@@ -116,16 +109,9 @@ function updateClick() {
          document.getElementById("hinhSP").value = data.img;
          document.getElementById("moTa").value = data.disc;
         updateId = id;
-    });
-    updateSubmit();
-  })
 }
-function deleteClick(){
-  let deleteleProduct = document.querySelectorAll(".product-delete");
-  [...deleteleProduct].forEach(item=>{
-    item.addEventListener("click", function (e) {
-      const id = +item.dataset.delete;
-      const swalWithBootstrapButtons = Swal.mixin({
+function deleteClick(id){
+    const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: 'btn btn-success',
       cancelButton: 'btn btn-danger'
@@ -151,8 +137,8 @@ function deleteClick(){
 
   }).then( async (result) => {
     if (result.isConfirmed) {
-      await deleteCourse(id);
-      renderCart();
+      await deleteProduct(id);
+      await getFullProduct();
       swalWithBootstrapButtons.fire(
         'Đã xóa!',
         'Sản phẩm của bạn đã bị xóa',
@@ -168,8 +154,6 @@ function deleteClick(){
         'error'
       )
     }
-  })
-    })
   })
 }
  function layThongTinTuForm() {
@@ -190,17 +174,72 @@ function deleteClick(){
    };
  };
 
- function updateSubmit(){
-  let submit = document.querySelector("#btnCapNhat");
-  submit.addEventListener("click", async () => {
+ async function updateSubmit( ) {
     const product = layThongTinTuForm();
-    await updateProduct({
-      id: updateId,
-      ...product
-    })
-  })
-  getFullProduct();
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      })
+
+      swalWithBootstrapButtons.fire({
+        showClass: {
+          popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp'
+        },
+        title: 'Bạn có muốn cập nhật sản phẩm không?',
+        text: "Sản phẩm sẽ thay đổi khi bạn đồng ý",
+        icon: 'question',
+        width: '50rem',
+        showCancelButton: true,
+        confirmButtonText: 'Tiếp tục',
+        cancelButtonText: 'Hủy',
+        reverseButtons: true
+
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+              await updateProduct({
+                id: updateId,
+                ...product
+              })
+              await getFullProduct();
+              updateId = null;
+              // document.querySelector
+          swalWithBootstrapButtons.fire(
+            'Cập nhật thành công',
+            'Sản phẩm của bạn đã cập nhật thành công',
+            'success'
+          )
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire(
+            'Đã hủy',
+            'Sản phẩm của bạn vẫn như cũ nhé',
+            'infor'
+          )
+        }
+      })
+
 }
 window.addEventListener("load",()=>{
   getFullProduct();
 })
+const template = ` <div class="loader">
+      <img src="../../assets/images/load.gif" alt="load">
+    </div>`;
+ function loader(on) {
+  const load = document.querySelector(".loader");
+  if (on) {
+    document.body.insertAdjacentHTML("afterbegin", template);
+  } else {
+    document.body.removeChild(load);
+
+  }
+
+}
